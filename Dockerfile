@@ -160,16 +160,16 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 ENV PHALCON_VERSION=3.0.1
 
 # Compile Phalcon
-RUN set -xe && \
-        curl -LO https://github.com/phalcon/cphalcon/archive/v${PHALCON_VERSION}.tar.gz && \
-        tar xzf v${PHALCON_VERSION}.tar.gz && cd cphalcon-${PHALCON_VERSION}/build && ./install && \
-        echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini && \
-        cd ../.. && rm -rf v${PHALCON_VERSION}.tar.gz cphalcon-${PHALCON_VERSION}
-        # Insall Phalcon Devtools, see https://github.com/phalcon/phalcon-devtools/
-        #curl -LO https://github.com/phalcon/phalcon-devtools/archive/v${PHALCON_VERSION}.tar.gz && \
-        #tar xzf v${PHALCON_VERSION}.tar.gz && \
-        #mv phalcon-devtools-${PHALCON_VERSION} /usr/local/phalcon-devtools && \
-        #ln -s /usr/local/phalcon-devtools/phalcon.php /usr/local/bin/phalcon
+RUN apt-get update && apt-get install unzip \
+    && curl -L -o /tmp/cphalcon.zip https://github.com/phalcon/cphalcon/archive/master.zip \
+    && unzip -d /tmp/ /tmp/cphalcon.zip \
+    && cd /tmp/cphalcon-master/build \
+    && ./install \
+    && echo 'extension=phalcon.so' > /usr/local/etc/php/conf.d/phalcon.ini \
+    && apt-get remove unzip \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/cphalcon* \
+
 
 #Composer
 RUN curl -sS https://getcomposer.org/installer | php \
