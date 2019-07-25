@@ -20,6 +20,12 @@ RUN apt-get update && apt-get install -y \
         && docker-php-ext-install mysqli \
         && rm -r /var/lib/apt/lists/*
 
+# Install package and PHP Core extensions memcached
+RUN apt-get update \
+  && apt-get install -y libmemcached-dev zlib1g-dev \
+  && pecl install memcached-3.1.3 \
+  && docker-php-ext-enable memcached opcache
+
 # Copy extensions had downloaded
 COPY ./pkg/redis.tgz /home/redis.tgz
 COPY ./pkg/cphalcon.tar.gz /home/cphalcon.tar.gz
@@ -41,7 +47,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ENV PATH $COMPOSER_HOME/vendor/bin:$PATH
 
 RUN rm -f /home/redis.tgz \
-        rm -f /home/cphalcon.tar.gz 
+        rm -f /home/cphalcon.tar.gz
 
 WORKDIR /data
 
