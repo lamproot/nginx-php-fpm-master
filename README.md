@@ -1,68 +1,78 @@
-![pipeline status](https://gitlab.com/ric_harvey/nginx-php-fpm/badges/master/pipeline.svg)
-![docker hub](https://img.shields.io/docker/pulls/richarvey/nginx-php-fpm.svg?style=flat-square)
-![docker hub](https://img.shields.io/docker/stars/richarvey/nginx-php-fpm.svg?style=flat-square)
+# zPhal-dockerfiles
+dockerfiles that support zPhal's working environment
 
-## Please open pull requests and issues on [https://gitlab.com/ric_harvey/nginx-php-fpm](https://gitlab.com/ric_harvey/nginx-php-fpm)
+## 简介
+用 Docker 容器服务的方式搭建 zPhal 环境，易于维护、升级。使用前需了解 Docker 的基本概念，常用基本命令。
+可以一条条命令执行docker命令来构建镜像，容器。这里推荐使用 docker-compose 来管理，执行项目，下面是使用流程。
 
-## Overview
-This is a Dockerfile/image to build a container for nginx and php-fpm, with the ability to pull website code from git when the container is created, as well as allowing the container to push and pull changes to the code to and from git. The container also has the ability to update templated files with variables passed to docker in order to update your code and settings. There is support for lets encrypt SSL configurations, custom nginx configs, core nginx/PHP variable overrides for running preferences, X-Forwarded-For headers and UID mapping for local volume support.
+相关软件版本：
+- PHP 7.2
+- MySQL 5.7
+- Nginx 1.12
+- Redis 3.2
 
-If you have improvements or suggestions please open an issue or pull request on the GitHub project page.
+用到的 PHP 拓展(2018.2.9更新)：
+- redis 3.1.4
+- Phalcon 3.3.1
 
-### Versioning
-| Docker Tag | Git Release | Nginx Version | PHP Version | Alpine Version |
-|-----|-------|-----|--------|--------|
-| latest/1.7.3 | Master Branch |1.16.0 | 7.3.6 | 3.9 |
-
-For other tags please see: [versioning](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/versioning.md)
-
-### Links
-- [https://gitlab.com/ric_harvey/nginx-php-fpm](https://gitlab.com/ric_harvey/nginx-php-fpm)
-- [https://registry.hub.docker.com/u/richarvey/nginx-php-fpm/](https://registry.hub.docker.com/u/richarvey/nginx-php-fpm/)
-
-## Quick Start
-To pull from docker hub:
+## 使用
+### 1.安装 Docker，Docker-compose  
+- Docker，详见官方文档：https://docs.docker.com/engine/installation/linux/docker-ce/centos/
+- docker-compose，文档：https://docs.docker.com/compose/install/
 ```
-docker pull richarvey/nginx-php-fpm:latest
-```
-### Running
-To simply run the container:
-```
-sudo docker run -d richarvey/nginx-php-fpm
-```
-To dynamically pull code from git when starting:
-```
-docker run -d -e 'GIT_EMAIL=email_address' -e 'GIT_NAME=full_name' -e 'GIT_USERNAME=git_username' -e 'GIT_REPO=github.com/project' -e 'GIT_PERSONAL_TOKEN=<long_token_string_here>' richarvey/nginx-php-fpm:latest
+sudo pip install -U docker-compose
 ```
 
-You can then browse to ```http://<DOCKER_HOST>``` to view the default install files. To find your ```DOCKER_HOST``` use the ```docker inspect``` to get the IP address (normally 172.17.0.2)
+### 2.下载 zPhal-dockerfiles
+直接 clone：
+```
+git clone git@github.com:ZpGuo/zPhal-dockerfiles.git
+```
+或者下载 zip 压缩包也可以。
 
-For more detailed examples and explanations please refer to the documentation.
-## Documentation
+### 3.下载需要的拓展包
+先下载好要使用的拓展包，如果编译出错要多次构建容器就可以省掉下载时间。
+```
+cd zPhal-dockerfiles/files
 
-- [Building from source](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/building.md)
-- [Versioning](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/versioning.md)
-- [Config Flags](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/config_flags.md)
-- [Git Auth](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/git_auth.md)
-  - [Personal Access token](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/git_auth.md#personal-access-token)
-  - [SSH Keys](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/git_auth.md#ssh-keys)
-- [Git Commands](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/git_commands.md)
- - [Push](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/git_commands.md#push-code-to-git)
- - [Pull](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/git_commands.md#pull-code-from-git-refresh)
-- [Repository layout / webroot](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/repo_layout.md)
- - [webroot](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/repo_layout.md#src--webroot)
-- [User / Group Identifiers](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/UID_GID_Mapping.md)
-- [Custom Nginx Config files](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/nginx_configs.md)
- - [REAL IP / X-Forwarded-For Headers](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/nginx_configs.md#real-ip--x-forwarded-for-headers)
-- [Scripting and Templating](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/scripting_templating.md)
- - [Environment Variables](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/scripting_templating.md#using-environment-variables--templating)
-- [Lets Encrypt Support](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/lets_encrypt.md)
- - [Setup](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/lets_encrypt.md#setup)
- - [Renewal](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/lets_encrypt.md#renewal)
-- [PHP Modules](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/php_modules.md)
-- [Xdebug](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/xdebug.md)
-- [Logging and Errors](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/logs.md)
+wget https://pecl.php.net/get/redis-3.1.6.tgz -O php/pkg/redis.tgz  
+wget https://codeload.github.com/phalcon/cphalcon/tar.gz/v3.3.1 -O php/pkg/cphalcon.tar.gz 
+```
 
-## Guides
-- [Running in Kubernetes](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/guides/kubernetes.md)
-- [Using Docker Compose](https://gitlab.com/ric_harvey/nginx-php-fpm/blob/master/docs/guides/docker_compose.md)
+### 4.docker-compose 构建项目
+进入 docker-compose.yml 所在目录：
+执行命令：
+```
+docker-compose up
+```  
+
+如果没问题，下次启动时可以以守护模式启用，所有容器将后台运行：  
+```
+docker-compose up -d
+``` 
+
+使用 docker-compose 基本上就这么简单，Docker 就跑起来了，用 stop，start 关闭开启容器服务。  
+更多的是在于编写 dockerfile 和 docker-compose.yml 文件。 
+
+可以这样关闭容器并删除服务：
+```
+docker-compose down
+```
+
+### 5. 使用 Composer
+zPhal 项目依赖 Composer 进行构建。
+
+我们在创建 PHP-fpm 容器时就已经将 Composer 安装在容器中，可以运行该容器进行 Composer 操作。
+
+用 docker-compose 进行操作：
+```
+docker-compose run --rm -w /data/www/zPhal php-fpm composer update
+```
+`-w /data/www/zPhal`为在php-fpm的工作区域，zPhal项目也是挂载在里面，所有我们可以直接在容器里运行composer。
+
+或者进入宿主机（容器外部）app 目录下用 docker 命令：
+```
+cd zPhal-dockerfiles/app
+
+docker run -it --rm -v `pwd`:/data/www/ -w /data/www/zPhal files_php-fpm composer update
+```
